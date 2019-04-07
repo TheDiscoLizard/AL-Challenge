@@ -29,18 +29,23 @@ function getDetail(category, title_id){
         }
 
         if (title_data.tagline != null){ // Add a tagline, if present
-            $('#detail-tagline')[0].innerText = title_data.tagline;
+            $('#detail-tagline')[0].innerHTML = '<h6 class="card-subtitle mb-2 text-muted text-center"><i>'+title_data.tagline+'</i></h6>';
+            $($('#detail-tagline')[0]).show();
         } else {
-            $('#detail-tagline')[0].innerText = "";
+            $($('#detail-tagline')[0]).hide();
         }
         if (title_data.backdrop_path != null){ // Retrieve the appropriate backdrop image
             $('#detail-backdrop').attr("src","https://image.tmdb.org/t/p/w500/" + title_data.backdrop_path);
+            $('#detail-backdrop').attr("style","width:40%;");
+            $('#detail-backdrop').attr("style","height:40%;");
         } else if (title_data.poster_path != null){
             $('#detail-backdrop').attr("src","https://image.tmdb.org/t/p/w500/" + title_data.poster_path);
             $('#detail-backdrop').attr("style","width:40%;");
-            $('#detail-backdrop').attr("style","height:270px;");
+            $('#detail-backdrop').attr("style","height:40%;");
         } else {
             $('#detail-backdrop').attr("src","https://img.icons8.com/ios/100/000000/question-mark-filled.png");
+            $('#detail-backdrop').attr("style","width:40%;");
+            $('#detail-backdrop').attr("style","height:40%;");
         }
         if (category == "movie"){
             // First set of detail will be the original release date and runtime
