@@ -1,0 +1,35 @@
+<div class="row">
+    <div class="col"></div>
+    <div class="col-12">
+        {# Some checks to see if pagination is required #}
+        {% if params["page"] != '' and params['q'] != '' and response.total_results > 0 %}
+        {# If so, then build pagination #}
+        <ul class="pagination pagination-sm justify-content-center">
+            {% if response.page == 1 %}
+            <li class="page-item disabled"><a class="page-link">First</a></li>
+            <li class="page-item disabled"><a class="page-link">Previous</a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link"
+                                     href="/search?q={{params['q']}}&category={{params['category']}}&page=1">First</a>
+            </li>
+            <li class="page-item"><a class="page-link"
+                                     href="/search?q={{params['q']}}&category={{params['category']}}&page={{params["page"]-1}}">Previous</a>
+            </li>
+            {% endif %}
+            <li class="page-item active"><a class="page-link">{{params["page"]}}</a></li>
+            {% if response.total_pages == params["page"] %}
+            <li class="page-item disabled"><a class="page-link">Next</a></li>
+            <li class="page-item disabled"><a class="page-link">Last</a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link"
+                                     href="/search?q={{params['q']}}&category={{params['category']}}&page={{ params["page"]+1}}">Next</a>
+            </li>
+            <li class="page-item"><a class="page-link"
+                                     href="/search?q={{params['q']}}&category={{params['category']}}&page={{response.total_pages}}">Last</a>
+            </li>
+            {% endif %}
+        </ul>
+        {% endif %}
+    </div>
+    <div class="col"></div>
+</div>

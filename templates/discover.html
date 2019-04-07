@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Movie Finder - Discover</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}">
+    <link rel="shortcut icon" href="{{url_for('static', filename='fav.ico')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/tmdb.css')}}">
+    <link rel="apple-touch-icon-precomposed" href="{{url_for('static', filename='fav.ico')}}"/>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top"><a class="navbar-brand" href="/">MovieFinder</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
+            class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="/search">Search</a></li>
+            <li class="nav-item active"><a class="nav-link" href="/discover">Discover Trending</a></li>
+        </ul>
+    </div>
+</nav>
+<section>
+    <div class="container" style="margin-top:80px">
+        <div class="row">
+            <div class="col-lg-12 mb-4 mt-2 text-center">
+                <h2>Discover Movies from This Year</h2>
+            </div>
+        </div>
+    </div>
+</section>
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="text-center"><h3>Top Trending</h3></div>
+                <div class="text-center" id="trending">
+                    <div class="spinner-border"></div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="text-center"><h3>Top Rated</h3></div>
+                <div class="text-center" id="highestrated">
+                    <div class="spinner-border "></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% include "modal.html" %}
+<script src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/tmdb.js')}}"></script>
+<script src="{{url_for('static', filename='js/discover.js')}}"></script>
+<button onclick="topFunction()" id="gototopbtn" title="Go to top">To Top</button>
+{% include "footer.html" %}
+</body>
+</html>

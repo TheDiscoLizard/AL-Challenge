@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Movie Finder - Search</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/tmdb.css')}}">
+    <link rel="shortcut icon" href="{{url_for('static', filename='fav.ico')}}">
+    <link rel="apple-touch-icon-precomposed" href="{{url_for('static', filename='fav.ico')}}"/>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top"><a class="navbar-brand" href="/">MovieFinder</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
+            class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+            <li class="nav-item active"><a class="nav-link" href="/search">Search</a></li>
+            <li class="nav-item"><a class="nav-link" href="/discover">Discover Trending</a></li>
+        </ul>
+    </div>
+</nav>
+<section>
+    <div class="container" style="margin-top:80px">
+        <div class="row">
+            <div class="col-lg-12 mb-4 mt-2 text-center">
+                <h2>Search</h2>
+            </div>
+        </div>
+    </div>
+</section>
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-sm-9" id="input">
+                <form>
+                    <div class="input-group">
+                        <input type="hidden" name="page" value="1">
+                        <div class="input-group-prepend"><span class="input-group-text">Find</span></div>
+                        {# Set the search bar up, and put param["q"] as its value #}
+                        <input type="search" class="form-control" placeholder="something" name="q"
+                               value="{{params['q']}}"
+                               id="search-box">
+                        <div class="input-group-append">
+                            <select class="custom-select" name="category" id="category-select">
+                                {# Set the selected value to match param["category"] #}
+                                {% if params["category"] == "movie"%}
+                                <option selected value="movie">in Movies</option>
+                                {% else %}
+                                <option value="movie">in Movies</option>
+                                {% endif %}
+                                {% if params["category"] == "tv"%}
+                                <option selected value="tv">in TV</option>
+                                {% else %}
+                                <option value="tv">in TV</option>
+                                {% endif %}
+                                {% if params["category"] == "person"%}
+                                <option selected value="person">in People</option>
+                                {% else %}
+                                <option value="person">in People</option>
+                                {% endif %}
+                            </select>
+                            <button class="btn btn-success" type="submit">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col"></div>
+        </div>
+    </div>
+</section>
+<section>
+    <div class="container">
+        <row>
+            <div class="col"></div>
+        </row>
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-sm-5" id="results-header">
+                {# Check if a response was received #}
+                {% if response != 0 %}
+                {# if so, was it an API request error? #}
+                {% if response.status_code %}
+                <div class="alert alert-danger text-center">Error {{response.status_code}}:
+                    {{response.status_message}}
+                </div>
+                {# Or, was it an API data error? #}
+                {% elif response.errors %}
+                <div class="alert alert-danger text-center">{{response.errors[0]}}</div>
+                {# Otherwise, if there was at least one result tell the user #}
+                {% elif response.total_results > 0 %}
+                <div class="alert alert-success text-center">Found {{response.total_results}} results (Showing page
+                    {{response.page}} of {{response.total_pages}})
+                </div>
+                {% else %}
+                <div class="alert alert-warning text-center">No results found...</div>
+                {% endif %}
+                {% endif %}
+            </div>
+            <div class="col"></div>
+        </div>
+        {% include "pagination.html" %}
+        <div class="row" id="results-body">
+            {# Time to present results, if there are any #}
+            {% if response.results %}
+            {% for result in response.results %}
+            {# For each result, build a div that contains its information #}
+            <div class="col-12">
+                <div class="media border p-3" style="width:100%;">
+                    {# If a poster exists #}
+                    {% if result.poster_path %}
+                    <img src="https://image.tmdb.org/t/p/w185/{{result.poster_path}}" class="mr-3 mt-3 rounded d-none d-sm-block"
+                         style="width:130px;">
+                    {# Otherwise if a profile picture exists #}
+                    {% elif result.profile_path %}
+                    <img src="https://image.tmdb.org/t/p/w185/{{result.profile_path}}" class="mr-3 mt-3 rounded d-none d-sm-block"
+                         style="width:130px;">
+                    {% else %}
+                    {# Otherwise default to missing icon #}
+                    <img src="https://img.icons8.com/ios/100/000000/question-mark-filled.png"
+                         class="mr-3 mt-3 rounded d-none d-sm-block"
+                         style="width:130px;">
+                    {% endif %}
+                    <div class="media-body" id="{{result.id}}">
+                        {% if result.title %}
+                        <h4>{{result.title}}</h4>
+                        {% endif %}
+                        {% if result.name %}
+                        <h4>{{result.name}}</h4>
+                        {% endif %}
+                        {% if result.release_date %}
+                        <div>
+                            <button href="#" style="cursor: pointer;" type="button"
+                                    class="btn btn-info btn-sm float-right" onclick='getDetail("movie",{{result.id}});'>
+                                Get details
+                            </button>
+                        </div>
+                        <h6><i>Released</i></h6>
+                        <p>{{result.release_date}}</p>
+                        {% elif result.first_air_date %}
+                        <div>
+                            <button href="#" style="cursor: pointer;" type="button"
+                                    class="btn btn-info btn-sm float-right" onclick='getDetail("tv",{{result.id}});'>Get
+                                details
+                            </button>
+                        </div>
+                        <h6><i>Released</i></h6>
+                        <p>{{result.first_air_date}}</p>
+                        {% endif %}
+                        {% if result.genre_ids %}
+                        <h6><i>Genres</i></h6>
+                        {% for genre in genres["genres"] %}
+                        {% for result_genre in result.genre_ids %}
+                        {% if result_genre== genre.id %}
+                        <span class="badge badge-secondary">{{genre.name}}</span>
+                        {% endif %}
+                        {% endfor %}
+                        {% endfor %}
+                        {% endif %}
+                        {# If there's an overview, we are looking at TV shows or movies #}
+                        {% if result.overview %}
+                        <h6><i>Overview</i></h6>
+                        <a class="" data-toggle="collapse" href="#overview-{{result.id}}">
+                            <h7><i> Expand</i></h7>
+                        </a>
+                        <div class="collapse" id="overview-{{result.id}}">
+                            <div class="card card-body">
+                                {{result.overview}}
+                            </div>
+                        </div>
+                        {# Otherwise we are looking at a person #}
+                        {% elif result.known_for %}
+                        <h6><i>Known for</i></h6>
+                        <ul class="list-group">
+                            {% for item in result.known_for %}
+                            <li class="list-group-item">
+                                <div class="media" style="width:100%;">
+                                    {% if item.poster_path %}
+                                    <img src="https://image.tmdb.org/t/p/w185/{{item.poster_path}}"
+                                         class="mr-3 mt-3 rounded d-none d-sm-block"
+                                         style="width:90px;">
+                                    {# Otherwise if a profile picture exists #}
+                                    {% elif item.profile_path %}
+                                    <img src="https://image.tmdb.org/t/p/w185/{{item.profile_path}}"
+                                         class="mr-3 mt-3 rounded d-none d-sm-block"
+                                         style="width:90px;">
+                                    {% else %}
+                                    {# Otherwise default to missing icon #}
+                                    <img src="https://img.icons8.com/ios/100/000000/question-mark-filled.png"
+                                         class="mr-3 mt-3 rounded d-none d-sm-block"
+                                         style="width:90px;">
+                                    {% endif %}
+                                    <div class="media-body">
+                                        {% if item.title %}
+                                        <h5>{{item.title}}</h5>
+                                        {% endif %}
+                                        {% if item.name %}
+                                        <h5>{{item.name}}</h5>
+                                        {% endif %}
+                                        {% if item.media_type %}
+                                        <h6><i>{{item.media_type}}</i></h6>
+                                        {% endif %}
+                                        {% if item.release_date %}
+                                        <div>
+                                            <button href="#" style="cursor: pointer;" type="button"
+                                                    class="btn btn-info btn-sm float-right"
+                                                    onclick="getDetail('movie',{{item.id}});">Get
+                                                details
+                                            </button>
+                                        </div>
+                                        <h7><i>Released</i></h7>
+                                        <p>{{item.release_date}}</p>
+                                        {% endif %}
+                                        {% if item.first_air_date %}
+                                        <div>
+                                            <button href="#" style="cursor: pointer;" type="button"
+                                                    class="btn btn-info btn-sm float-right"
+                                                    onclick="getDetail('tv',{{item.id}});">Get details
+                                            </button>
+                                        </div>
+                                        <h7><i>Released</i></h7>
+                                        <p>{{item.first_air_date}}</p>
+                                        {% else %}
+                                        <h7><i>Released</i></h7>
+                                        <p>Unknown</p>
+                                        {% endif %}
+                                        {% if item.overview %}
+                                        <h7><i>Overview</i></h7>
+                                        <a class="" data-toggle="collapse" href="#overview-{{item.id}}">
+                                            <h7><i> Expand</i></h7>
+                                        </a>
+                                        <div class="collapse" id="overview-{{item.id}}">
+                                            <div class="card card-body">
+                                                {{item.overview}}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <h6><i>Overview</i></h6>
+                        <p>No overview</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+        <br>
+        {% include "pagination.html" %}
+    </div>
+    </div>
+</section>
+{% include "modal.html" %}
+<script src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/tmdb.js')}}"></script>
+<button onclick="topFunction()" id="gototopbtn" title="Go to top">To Top</button>
+{% include "footer.html" %}
+</body>
+</html>
