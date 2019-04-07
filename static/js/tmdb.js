@@ -21,7 +21,6 @@ function getDetail(category, title_id){
     // This function is repsonsible for interacting with the /api/detail interface to pull information about a given title
     // It then writes the information to the page's modal component, before making the modal visible.
     $.get( "/api/detail",{"category":category, "id": title_id}).done(function(data) {
-        console.log(JSON.parse(data));
         title_data = JSON.parse(data);
         if (category == "movie"){ // Add the title of the movie
             $('#detail-title')[0].innerText = title_data.title;
