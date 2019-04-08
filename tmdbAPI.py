@@ -29,6 +29,7 @@ def get_genres(category):
     tv_genres = requests.get(url, payload)
     return tv_genres.json()
 
+
 def find_rated():
     # Simple query against the MD API to pull first page of highest rated movies, that have at least 500 votes
     endpoint = "/discover/movie"
