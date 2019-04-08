@@ -19,27 +19,15 @@ def search(params):
     return response.json()
 
 
-def get_movie_genres():
-    # Gets the list of movie genres from the Movie Database API, which can be used to translate Genre IDs to Names.
-    payload = {
-        "api_key": api_key
-    }
-    endpoint = "/genre/movie/list"
-    url = base_url + endpoint
-    movie_genres = requests.get(url, payload)
-    return movie_genres.json()
-
-
-def get_tv_genres():
+def get_genres(category):
     # Gets the list of TV genres from the Movie Database API, which can be used to translate Genre IDs to Names.
     payload = {
         "api_key": api_key
     }
-    endpoint = "/genre/tv/list"
+    endpoint = "/genre/" + category + "/list"
     url = base_url + endpoint
     tv_genres = requests.get(url, payload)
     return tv_genres.json()
-
 
 def find_rated():
     # Simple query against the MD API to pull first page of highest rated movies, that have at least 500 votes
@@ -70,7 +58,7 @@ def find_trending():
 
 def get_detail(category, title_id):
     # Simple query against the MD API to detail for a given movie or tv show
-    endpoint = "/" + category + "/" + title_id
+    endpoint = "/" + category + "/" + str(title_id)
     payload = {
         "api_key": api_key
     }

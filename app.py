@@ -18,31 +18,18 @@ def search():
     # These are defaults that will only be modified if user input is valid.
     valid_cats = ["movie", "tv", "person"]
     params = {
-        "category": "movie",
-        "page": 1,
-        "q": ""
+        "category": request.args.get("category", default="movie", type=str),
+        "page": request.args.get("page", default=1, type=int),
+        "q": request.args.get("q", default="", type=str)
     }
-    if request.args.get("category"):
-        # A category has been supplied
-        if request.args.get("category") in valid_cats:
-            # And it is a valid category, so set the category
-            params["category"] = request.args.get("category")
-    if request.args.get("page"):
-        # A page has been supplied
-        if request.args.get("page").isdigit():
-            # It is a valid digit, so set the page
-            params["page"] = int(request.args.get("page"))
-    if request.args.get("q"):
-        # A query has been supplied
-        params["q"] = request.args.get("q")
-    if request.args.get("q"):
-        # A query is present, so try a search
+    # Check if the supplied category is valid
+    if params["category"] not in valid_cats:
+        # If it isn't, reset it to default
+        params["category"] = "movie"
+    if params["q"] != "":
+        # A non-empty query has been supplied, so try a search
         response_data = tmdbAPI.search(params)
-        genres = ""
-        if params["category"] == "movie":
-            genres = tmdbAPI.get_movie_genres()
-        if params["category"] == "tv":
-            genres = tmdbAPI.get_tv_genres()
+        genres = tmdbAPI.get_genres(params["category"])
         # Everything is set up, so render search.html with the params, genre list, and response data.
         return render_template("search.html", params=params, response=response_data, genres=genres)
     else:
@@ -74,14 +61,11 @@ def trending():
 
 @tmdb_app.route("/api/detail")
 def detail():
-    category = ""
-    title_id = ""
-    if request.args["category"] == "movie":
+    valid_cats = ["movie", "tv"]
+    category = request.args.get("category", default="movie", type=str)
+    title_id = request.args.get("id", default=0, type=int)
+    if category not in valid_cats:
         category = "movie"
-    if request.args["category"] == "tv":
-        category = "tv"
-    if request.args["id"]:
-        title_id = request.args["id"]
     # call the finder function, which returns the JSON object from The Movie DB API
     return tmdbAPI.get_detail(category, title_id)
 
