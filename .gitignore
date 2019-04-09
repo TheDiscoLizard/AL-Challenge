@@ -1,12 +1,2 @@
-
-.idea/workspace.xml
-.idea/vcs.xml
-.idea/modules.xml
-.idea/misc.xml
-.idea/AL-Challenge.iml
-.idea/encodings.xml
-__pycache__/tmdbAPI.cpython-37.pyc
-__pycache__/tmdbAPI.cpython-37.pyc
-__pycache__/tmdbAPI.cpython-37.pyc
-__pycache__/tmdbAPI.cpython-37.pyc
-*.pyc
+.idea/**
+__pycache__/**
